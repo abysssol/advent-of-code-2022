@@ -220,19 +220,26 @@ impl Display for IoError {
 ///
 /// Use the alternate formatting to display all error sources.
 /// ```
-/// use get_input::{Input, IoError, SomeError};
+/// use input::{Input, IoError, SomeError};
 /// use std::io::{self, ErrorKind};
 ///
 /// let error = IoError {
 ///     input: Input::Stdin,
-///     error: io::Error::from(ErrorKind::NotFound),
+///     error: io::Error::new(ErrorKind::NotFound, "os error opening stdin"),
 /// };
+/// let error = SomeError::new(error);
 ///
 /// // with normal formatting, just pass through to the inner error
-/// println!("{error}");
+/// assert_eq!(format!("{error}"), "can't read from stdin");
 ///
-/// // with alternate formatting, "pretty" print error and all sources
-/// println!("{error:#}");
+/// // with alternate formatting, pretty print error and all sources
+/// assert_eq!(
+///     format!("{error:#}"),
+///     concat!(
+///         "error: can't read from stdin\n",
+///         "  - os error opening stdin\n"
+///     )
+/// );
 /// ```
 #[derive(Debug)]
 pub struct SomeError(pub Box<dyn Error + Send + Sync + 'static>);
