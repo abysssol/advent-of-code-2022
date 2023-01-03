@@ -30,6 +30,7 @@ use std::{env, fmt, fs, io, process};
 ///
 /// Provides a [`String`] with the input collected from standard input or a file,
 /// as specified with command line arguments.
+/// If any errors are encountered, they will be displayed and the app will exit.
 pub fn with(description: Description, main: impl FnOnce(String) -> Result<(), SomeError>) {
     if let Err(error) = get(description).and_then(main) {
         eprintln!("{error:#}");
