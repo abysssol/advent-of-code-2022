@@ -1,7 +1,7 @@
 //! Various helpers to get input from the command line,
 //! specifically made for advent of code 2022.
 //!
-//! The simplest way to get input is to hook into [`main`].
+//! The simplest way to get input is to hook into [`with`].
 //! ```no_run
 //! use input::Description;
 //!
