@@ -264,10 +264,8 @@ impl Display for SomeError {
         let error = &*self.0;
 
         if f.alternate() {
-            let error_sources = self.iter().skip(1);
-
             writeln!(f, "error: {error}")?;
-            for error in error_sources {
+            for error in self.iter().skip(1) {
                 writeln!(f, "  - {error}")?;
             }
 
