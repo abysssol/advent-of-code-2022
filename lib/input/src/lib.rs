@@ -250,8 +250,8 @@ impl SomeError {
     }
 
     /// Iterate over this error and all of its sources.
-    pub fn iter(&self) -> ErrorChain<'_> {
-        self.into_iter()
+    pub const fn iter(&self) -> ErrorChain<'_> {
+        ErrorChain::new(&*self.0)
     }
 
     pub fn source(&self) -> Option<&(dyn Error + 'static)> {
@@ -289,7 +289,7 @@ impl<'a> IntoIterator for &'a SomeError {
     type IntoIter = ErrorChain<'a>;
 
     fn into_iter(self) -> Self::IntoIter {
-        ErrorChain::new(&*self.0)
+        self.iter()
     }
 }
 
@@ -298,7 +298,7 @@ impl<'a> IntoIterator for &'a SomeError {
 pub struct ErrorChain<'a>(Option<&'a (dyn Error + 'static)>);
 
 impl<'a> ErrorChain<'a> {
-    pub fn new(error: &'a (dyn Error + 'static)) -> Self {
+    pub const fn new(error: &'a (dyn Error + 'static)) -> Self {
         Self(Some(error))
     }
 }
