@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fmt::Display;
 use std::num::ParseIntError;
+use std::str::FromStr;
 
 use input::Description;
 
@@ -16,7 +17,7 @@ then returns the largest sum and the sum of the largest 3 sums.",
             version: (0, 1, 0),
         },
         |input| {
-            let elves = Elves::try_from(&input)?;
+            let elves = input.parse::<Elves>()?;
             let top = elves.sum_calories_top::<1>();
             let top_three = elves.sum_calories_top::<3>();
 
@@ -33,23 +34,6 @@ struct Elves {
 }
 
 impl Elves {
-    fn try_from(calories: &str) -> Result<Self, ParseError> {
-        let mut elves = Vec::new();
-        let mut rations = Vec::new();
-
-        for line in calories.lines() {
-            if line.is_empty() {
-                elves.push(Elf { rations });
-                rations = Vec::new();
-            } else {
-                let calories = line.parse::<u64>().map_err(ParseError)?;
-                rations.push(Ration { calories });
-            }
-        }
-
-        Ok(Self { elves })
-    }
-
     fn sum_calories_top<const N: usize>(&self) -> u64 {
         self.elves
             .iter()
@@ -65,6 +49,27 @@ impl Elves {
             })
             .iter()
             .sum()
+    }
+}
+
+impl FromStr for Elves {
+    type Err = ParseError;
+
+    fn from_str(calories: &str) -> Result<Self, ParseError> {
+        let mut elves = Vec::new();
+        let mut rations = Vec::new();
+
+        for line in calories.lines() {
+            if line.is_empty() {
+                elves.push(Elf { rations });
+                rations = Vec::new();
+            } else {
+                let calories = line.parse::<u64>().map_err(ParseError)?;
+                rations.push(Ration { calories });
+            }
+        }
+
+        Ok(Self { elves })
     }
 }
 
