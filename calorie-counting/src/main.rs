@@ -17,11 +17,11 @@ then returns the largest sum and the sum of the largest 3 sums.",
         },
         |input| {
             let elves = Elves::try_from(&input)?;
-            let max_calorie_sum = elves.max_calorie_sum(3);
-            let max_calories = elves.max_calorie_sum(1);
+            let top = elves.sum_calories_top::<1>();
+            let top_three = elves.sum_calories_top::<3>();
 
-            println!("{max_calories}");
-            println!("{max_calorie_sum}");
+            println!("{top}");
+            println!("{top_three}");
 
             Ok(())
         },
@@ -50,19 +50,17 @@ impl Elves {
         Ok(Self { elves })
     }
 
-
-    fn max_calorie_sum(&self, top: usize) -> u64 {
+    fn sum_calories_top<const N: usize>(&self) -> u64 {
         self.elves
             .iter()
             .map(|elf| elf.rations.iter().map(|ration| ration.calories).sum())
-            .fold(Vec::with_capacity(top), |mut tops, calories: u64| {
-                if tops.len() < top {
-                    tops.push(calories);
-                } else {
-                    tops.sort_unstable();
-                    let Some(bottom) = tops.first_mut() else { return tops };
-                    *bottom = calories.max(*bottom);
+            .fold([0; N], |mut tops, calories: u64| {
+                tops.sort_unstable();
+
+                if let Some(lowest) = tops.first_mut() {
+                    *lowest = calories.max(*lowest);
                 }
+
                 tops
             })
             .iter()
