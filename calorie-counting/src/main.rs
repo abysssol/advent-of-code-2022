@@ -17,8 +17,8 @@ then returns the largest sum and the sum of the largest 3 sums.",
         },
         |input| {
             let elves = Elves::try_from(&input)?;
-            let max_calories = elves.max_calories();
             let max_calorie_sum = elves.max_calorie_sum(3);
+            let max_calories = elves.max_calorie_sum(1);
 
             println!("{max_calories}");
             println!("{max_calorie_sum}");
@@ -50,13 +50,6 @@ impl Elves {
         Ok(Self { elves })
     }
 
-    fn max_calories(&self) -> u64 {
-        self.elves
-            .iter()
-            .map(|elf| elf.rations.iter().map(|ration| ration.calories).sum())
-            .max()
-            .unwrap()
-    }
 
     fn max_calorie_sum(&self, top: usize) -> u64 {
         self.elves
