@@ -33,7 +33,7 @@ struct Elves {
 }
 
 impl Elves {
-    fn try_from(calories: &str) -> Result<Self, BadInput> {
+    fn try_from(calories: &str) -> Result<Self, ParseError> {
         let mut elves = Vec::new();
         let mut rations = Vec::new();
 
@@ -42,7 +42,7 @@ impl Elves {
                 elves.push(Elf { rations });
                 rations = Vec::new();
             } else {
-                let calories = line.parse::<u64>().map_err(BadInput)?;
+                let calories = line.parse::<u64>().map_err(ParseError)?;
                 rations.push(Ration { calories });
             }
         }
@@ -86,15 +86,15 @@ struct Ration {
 }
 
 #[derive(Debug)]
-struct BadInput(ParseIntError);
+struct ParseError(ParseIntError);
 
-impl Error for BadInput {
+impl Error for ParseError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         Some(&self.0)
     }
 }
 
-impl Display for BadInput {
+impl Display for ParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
